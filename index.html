@@ -1,269 +1,207 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciador de Projetos e Tarefas</title>
+    <title>Gestor de Projetos e Tarefas</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <header>
-        <div class="container header-content">
-            <div class="logo">Gerenciador de Projetos</div>
-            <div class="auth-section" id="authSection">
-                <input type="text" id="userIdInput" class="form-control" placeholder="ID do Colaborador">
-                <button class="btn btn-outline" id="loginBtn">Entrar</button>
-            </div>
-        </div>
-    </header>
-
-    <div class="container main-content">
+    <div class="container">
         <!-- Tela de Login -->
-        <div id="loginScreen" class="card">
-            <h2>Bem-vindo ao Gerenciador de Projetos</h2>
-            <p>Por favor, insira seu ID de colaborador para acessar o sistema.</p>
+        <div id="login-screen" class="screen active">
+            <div class="login-container">
+                <h1>Gestor de Projetos</h1>
+                <div class="login-form">
+                    <input type="text" id="user-id" placeholder="ID do Colaborador" required>
+                    <button id="login-btn">Entrar</button>
+                </div>
+                <p id="login-message"></p>
+            </div>
         </div>
 
-        <!-- Tela Principal (após login) -->
-        <div id="mainScreen" style="display: none;">
-            <div class="flex items-center gap-2 mb-3">
-                <div class="user-avatar" id="userAvatar">A</div>
-                <div>
-                    <div id="userName">Administrador</div>
-                    <div class="text-small text-muted" id="userId">ID: 1234</div>
+        <!-- Tela Principal -->
+        <div id="main-screen" class="screen">
+            <header>
+                <div class="user-info">
+                    <span id="logged-user"></span>
+                    <button id="logout-btn">Sair</button>
                 </div>
-            </div>
+                <h1>Gestor de Projetos</h1>
+                <nav>
+                    <button id="view-projects-btn" class="active">Projetos</button>
+                    <button id="view-tasks-btn">Minhas Tarefas</button>
+                    <button id="view-gantt-btn">Diagrama de Gantt</button>
+                    <button id="manage-users-btn">Colaboradores</button>
+                </nav>
+            </header>
 
-            <div class="tabs">
-                <div class="tab active" data-tab="projects">Projetos</div>
-                <div class="tab" data-tab="tasks">Minhas Tarefas</div>
-                <div class="tab" data-tab="team">Equipe</div>
-            </div>
-
-            <div class="tab-content active" id="projectsTab">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Todos os Projetos</div>
-                        <button class="btn btn-primary" id="addProjectBtn">Adicionar Projeto</button>
+            <main>
+                <!-- Seção de Projetos -->
+                <section id="projects-section" class="active">
+                    <div class="section-header">
+                        <h2>Projetos</h2>
+                        <button id="add-project-btn">Adicionar Projeto</button>
                     </div>
-                    <div id="alertsContainer"></div>
-                    <table class="table" id="projectsTable">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Descrição</th>
-                                <th>Data Início</th>
-                                <th>Data Término</th>
-                                <th>Tarefas</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="projectsTableBody">
-                            <!-- Projetos serão carregados aqui -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                    <div id="projects-list" class="card-container"></div>
+                </section>
 
-            <div class="tab-content" id="tasksTab">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Minhas Tarefas</div>
+                <!-- Seção de Tarefas do Usuário -->
+                <section id="my-tasks-section">
+                    <div class="section-header">
+                        <h2>Minhas Tarefas</h2>
                     </div>
-                    <table class="table" id="tasksTable">
-                        <thead>
-                            <tr>
-                                <th>Projeto</th>
-                                <th>Tarefa</th>
-                                <th>Descrição</th>
-                                <th>Prazo</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tasksTableBody">
-                            <!-- Tarefas do usuário serão carregadas aqui -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                    <div id="my-tasks-list" class="card-container"></div>
+                </section>
 
-            <div class="tab-content" id="teamTab">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Membros da Equipe</div>
-                        <button class="btn btn-primary" id="addMemberBtn">Adicionar Membro</button>
+                <!-- Seção de Diagrama de Gantt -->
+                <section id="gantt-section">
+                    <div class="section-header">
+                        <h2>Diagrama de Gantt</h2>
+                        <select id="gantt-project-select"></select>
                     </div>
-                    <table class="table" id="teamTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nome</th>
-                                <th>Tarefas Atribuídas</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="teamTableBody">
-                            <!-- Membros da equipe serão carregados aqui -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                    <div id="gantt-chart"></div>
+                </section>
+
+                <!-- Seção de Gerenciamento de Usuários -->
+                <section id="users-section">
+                    <div class="section-header">
+                        <h2>Colaboradores</h2>
+                        <button id="add-user-btn">Adicionar Colaborador</button>
+                    </div>
+                    <div id="users-list" class="card-container"></div>
+                </section>
+            </main>
         </div>
     </div>
 
     <!-- Modais -->
-    <div class="modal" id="projectModal">
+    <div id="modal-backdrop" class="hidden"></div>
+
+    <!-- Modal de Projeto -->
+    <div id="project-modal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title" id="projectModalTitle">Adicionar Novo Projeto</div>
-                <span class="close">&times;</span>
+                <h3 id="project-modal-title">Adicionar Projeto</h3>
+                <button class="close-modal">&times;</button>
             </div>
-            <form id="projectForm">
-                <input type="hidden" id="projectId">
-                <div class="form-group">
-                    <label for="projectName" class="form-label">Nome do Projeto</label>
-                    <input type="text" class="form-control" id="projectName" required>
-                </div>
-                <div class="form-group">
-                    <label for="projectDescription" class="form-label">Descrição</label>
-                    <textarea class="form-control" id="projectDescription" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="projectStartDate" class="form-label">Data de Início</label>
-                    <input type="date" class="form-control" id="projectStartDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="projectEndDate" class="form-label">Data de Término</label>
-                    <input type="date" class="form-control" id="projectEndDate" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Salvar</button>
-            </form>
+            <div class="modal-body">
+                <form id="project-form">
+                    <input type="hidden" id="project-id">
+                    <div class="form-group">
+                        <label for="project-name">Nome do Projeto</label>
+                        <input type="text" id="project-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-description">Descrição</label>
+                        <textarea id="project-description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-start-date">Data de Início</label>
+                        <input type="date" id="project-start-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-end-date">Data de Término</label>
+                        <input type="date" id="project-end-date" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit">Salvar</button>
+                        <button type="button" class="cancel-btn">Cancelar</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
-    <div class="modal" id="taskModal">
+    <!-- Modal de Tarefa -->
+    <div id="task-modal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title" id="taskModalTitle">Adicionar Nova Tarefa</div>
-                <span class="close">&times;</span>
+                <h3 id="task-modal-title">Adicionar Tarefa</h3>
+                <button class="close-modal">&times;</button>
             </div>
-            <form id="taskForm">
-                <input type="hidden" id="taskId">
-                <input type="hidden" id="taskProjectId">
-                <div class="form-group">
-                    <label for="taskName" class="form-label">Nome da Tarefa</label>
-                    <input type="text" class="form-control" id="taskName" required>
-                </div>
-                <div class="form-group">
-                    <label for="taskDescription" class="form-label">Descrição</label>
-                    <textarea class="form-control" id="taskDescription" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="taskStartDate" class="form-label">Data de Início</label>
-                    <input type="date" class="form-control" id="taskStartDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="taskEndDate" class="form-label">Data de Término</label>
-                    <input type="date" class="form-control" id="taskEndDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="taskAssignee" class="form-label">Responsável</label>
-                    <select class="form-control" id="taskAssignee" required>
-                        <!-- Opções serão preenchidas via JS -->
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="taskStatus" class="form-label">Status</label>
-                    <select class="form-control" id="taskStatus" required>
-                        <option value="pending">Pendente</option>
-                        <option value="in_progress">Em Progresso</option>
-                        <option value="completed">Concluído</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">Salvar</button>
-            </form>
+            <div class="modal-body">
+                <form id="task-form">
+                    <input type="hidden" id="task-id">
+                    <input type="hidden" id="task-project-id">
+                    <div class="form-group">
+                        <label for="task-name">Nome da Tarefa</label>
+                        <input type="text" id="task-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-description">Descrição</label>
+                        <textarea id="task-description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-start-date">Data de Início</label>
+                        <input type="date" id="task-start-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-end-date">Data de Término</label>
+                        <input type="date" id="task-end-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-assigned-to">Atribuída a</label>
+                        <select id="task-assigned-to"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-status">Status</label>
+                        <select id="task-status">
+                            <option value="pending">Pendente</option>
+                            <option value="in-progress">Em Progresso</option>
+                            <option value="completed">Concluída</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit">Salvar</button>
+                        <button type="button" class="cancel-btn">Cancelar</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
-    <div class="modal" id="memberModal">
+    <!-- Modal de Usuário -->
+    <div id="user-modal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title" id="memberModalTitle">Adicionar Novo Membro</div>
-                <span class="close">&times;</span>
+                <h3 id="user-modal-title">Adicionar Colaborador</h3>
+                <button class="close-modal">&times;</button>
             </div>
-            <form id="memberForm">
-                <input type="hidden" id="memberId">
-                <div class="form-group">
-                    <label for="memberName" class="form-label">Nome Completo</label>
-                    <input type="text" class="form-control" id="memberName" required>
-                </div>
-                <div class="form-group">
-                    <label for="memberIdInput" class="form-label">ID</label>
-                    <input type="text" class="form-control" id="memberIdInput" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Salvar</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal" id="projectDetailModal">
-        <div class="modal-content" style="max-width: 800px;">
-            <div class="modal-header">
-                <div class="modal-title" id="projectDetailTitle">Detalhes do Projeto</div>
-                <span class="close">&times;</span>
-            </div>
-            <div class="mb-3">
-                <h3 id="detailProjectName"></h3>
-                <p id="detailProjectDescription"></p>
-                <p><strong>Período:</strong> <span id="detailProjectPeriod"></span></p>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">Tarefas do Projeto</div>
-                    <button class="btn btn-primary" id="addTaskToProjectBtn">Adicionar Tarefa</button>
-                </div>
-                <table class="table" id="projectTasksTable">
-                    <thead>
-                        <tr>
-                            <th>Tarefa</th>
-                            <th>Descrição</th>
-                            <th>Responsável</th>
-                            <th>Prazo</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="projectTasksTableBody">
-                        <!-- Tarefas do projeto serão carregadas aqui -->
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="card mt-3">
-                <div class="card-header">
-                    <div class="card-title">Diagrama de Gantt</div>
-                </div>
-                <div class="gantt-chart" id="ganttChart">
-                    <!-- Diagrama de Gantt será renderizado aqui -->
-                </div>
+            <div class="modal-body">
+                <form id="user-form">
+                    <input type="hidden" id="user-modal-id">
+                    <div class="form-group">
+                        <label for="user-modal-name">Nome Completo</label>
+                        <input type="text" id="user-modal-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-modal-id-input">ID</label>
+                        <input type="text" id="user-modal-id-input" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit">Salvar</button>
+                        <button type="button" class="cancel-btn">Cancelar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <div class="modal" id="confirmModal">
-        <div class="modal-content" style="max-width: 400px;">
+    <!-- Modal de Confirmação -->
+    <div id="confirm-modal" class="modal hidden">
+        <div class="modal-content small">
             <div class="modal-header">
-                <div class="modal-title" id="confirmModalTitle">Confirmar Ação</div>
-                <span class="close">&times;</span>
+                <h3 id="confirm-modal-title">Confirmar Ação</h3>
+                <button class="close-modal">&times;</button>
             </div>
-            <div class="mb-3">
-                <p id="confirmModalMessage">Tem certeza que deseja excluir este item?</p>
-            </div>
-            <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                <button class="btn btn-outline" id="confirmCancelBtn">Cancelar</button>
-                <button class="btn btn-danger" id="confirmActionBtn">Confirmar</button>
+            <div class="modal-body">
+                <p id="confirm-message">Tem certeza que deseja excluir este item?</p>
+                <div class="form-actions">
+                    <button id="confirm-yes">Sim</button>
+                    <button id="confirm-no">Não</button>
+                </div>
             </div>
         </div>
     </div>
